@@ -1,6 +1,7 @@
 // import logo from "./logo.svg";
 import './App.css';
 import React from 'react';
+import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 class App extends React.Component {
@@ -23,7 +24,7 @@ class App extends React.Component {
         {
           deskripsi: 'Makan Nasi Padang',
           tanggal: '3 Juli 2023',
-          nominal: 50000,
+          nominal: 100000,
           category: 'OUT',
         },
       ],
@@ -37,28 +38,19 @@ class App extends React.Component {
 
     let dataUangIN = newData.filter((item) => item.category === 'IN');
     let nominalUangIN = dataUangIN.map((item) => item.nominal);
-    // let jumlahUangIN = nominalUangIN.reduce((total, num) => total + num, 0);
-    let jumlahUangIN = nominalUangIN.reduce(
-      (total, num) => total + parseInt(num),
-      0
-    );
+    let jumlahUangIN = nominalUangIN.reduce((total, num) => total + num);
 
     let dataUangOUT = newData.filter((item) => item.category === 'OUT');
     let nominalUangOUT = dataUangOUT.map((item) => item.nominal);
-    // let jumlahUangOUT = nominalUangOUT.reduce((total, num) => total + num);
-    let jumlahUangOUT = nominalUangOUT.reduce(
-      (total, num) => total + parseInt(num),
-      0
-    );
+    let jumlahUangOUT = nominalUangOUT.reduce((total, num) => total + num);
 
     this.setState({
-      summary: newData,
-
       pemasukanUang: jumlahUangIN,
       transaksiIN: nominalUangIN.length,
 
       pengeluaranUang: jumlahUangOUT,
       transaksiOUT: nominalUangOUT.length,
+
       sisaUang: jumlahUangIN - jumlahUangOUT,
       persentaseUang: ((jumlahUangIN - jumlahUangOUT) / jumlahUangIN) * 100,
     });
@@ -83,7 +75,7 @@ class App extends React.Component {
       pengeluaranUang: jumlahUangOUT,
       transaksiOUT: nominalUangOUT.length,
       sisaUang: jumlahUangIN - jumlahUangOUT,
-      persentaseUang: ((jumlahUangIN - jumlahUangOUT) / jumlahUangIN) * 100,
+      persentaseUang: (jumlahUangIN - jumlahUangOUT) / (jumlahUangIN * 100),
     });
   }
 
@@ -132,7 +124,7 @@ class App extends React.Component {
                   <div className="icon-wraper">
                     <i className="bi bi-cash-stack"></i>
                   </div>
-                  <span className="title-sm">Pengeluaran</span>
+                  <span className="title-sm">Pemasukan</span>
                   <div>
                     <h3 className="fw-bold">
                       Rp. {this.state.pengeluaranUang},-
@@ -218,6 +210,7 @@ class App extends React.Component {
     );
   }
 }
+
 class ModalCreate extends React.Component {
   constructor() {
     super();
@@ -338,4 +331,5 @@ class ModalCreate extends React.Component {
     );
   }
 }
+
 export default App;
