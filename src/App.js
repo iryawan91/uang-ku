@@ -19,18 +19,47 @@ class App extends React.Component {
           deskripsi: 'Menerima Gaji',
           tanggal: '1 Juli 2023',
           nominal: 1500000,
-          kategori: 'IN',
+          category: 'IN',
         },
         {
           deskripsi: 'Makan Nasi Padang',
           tanggal: '3 Juli 2023',
           nominal: 20000,
-          kategori: 'OUT',
+          category: 'OUT',
         },
       ],
     };
+    this.tambahItem = this.tambahItem.bind(this);
   }
 
+  tambahItem(objek) {
+    this.setState({
+      summary: [...this.state.summary, objek],
+    });
+  }
+
+  componentDidMount() {
+    let dataUangIN = this.state.summary.filter(
+      (item) => item.category === 'IN'
+    );
+    let nominalUangIN = dataUangIN.map((item) => item.nominal);
+    let jumlahUangIN = nominalUangIN.reduce((total, num) => total + num);
+
+    let dataUangOUT = this.state.summary.filter(
+      (item) => item.category === 'OUT'
+    );
+    let nominalUangOUT = dataUangOUT.map((item) => item.nominal);
+    let jumlahUangOUT = nominalUangOUT.reduce((total, num) => total + num);
+    this.setState({
+      pemasukanUang: jumlahUangIN,
+      transaksiIN: nominalUangIN.length,
+
+      pengeluaranUang: jumlahUangOUT,
+      transaksiOUT: nominalUangOUT.length,
+      sisaUang: jumlahUangIN - jumlahUangOUT,
+      persentaseUang: ((jumlahUangIN - jumlahUangOUT) / jumlahUangIN) * 100,
+    });
+  }
   render() {
     return (
       <>
@@ -59,7 +88,9 @@ class App extends React.Component {
                     <h3 className="fw-bold">
                       Rp. {this.state.pemasukanUang},-
                     </h3>
-                    <span className="title-sm title-text-ungu">50</span>
+                    <span className="title-sm title-text-ungu">
+                      {this.state.transaksiIN}
+                    </span>
                     <span className="title-sm"> Transaksi</span>
                   </div>
                 </div>
@@ -75,7 +106,9 @@ class App extends React.Component {
                     <h3 className="fw-bold">
                       Rp. {this.state.pengeluaranUang},-
                     </h3>
-                    <span className="title-sm title-text-ungu">50</span>
+                    <span className="title-sm title-text-ungu">
+                      {this.state.transaksiOUT}
+                    </span>
                     <span className="title-sm"> Transaksi</span>
                   </div>
                 </div>
@@ -91,12 +124,16 @@ class App extends React.Component {
                     text="Pemasukan"
                     icon="bi bi-plus-circle-dotted"
                     modalHeading="Tambahkan Pemasukan"
+                    category="IN"
+                    action={this.tambahItem}
                   />
                   <ModalCreate
                     variant="button btn-merah px-3 py-2 me-2"
                     text="Pengeluaran"
                     icon="bi bi-dash-circle-dotted"
                     modalHeading="Tambahkan Pengeluaran"
+                    category="OUT"
+                    action={this.tambahItem}
                   />
                 </div>
               </div>
@@ -112,14 +149,14 @@ class App extends React.Component {
                     <div className="d-flex  align-items-center">
                       <div
                         className={
-                          sum.kategori === 'IN'
+                          sum.category === 'IN'
                             ? 'icon-wraper-in mt-2'
                             : 'icon-wraper-out mt-2'
                         }
                       >
                         <i
                           className={
-                            sum.kategori === 'IN'
+                            sum.category === 'IN'
                               ? 'bi bi-wallet2'
                               : 'bi bi-bag-dash'
                           }
@@ -133,7 +170,7 @@ class App extends React.Component {
                     </div>
                     <h5
                       className={
-                        sum.kategori === 'IN'
+                        sum.category === 'IN'
                           ? 'text-money-in'
                           : 'text-money-out'
                       }
@@ -159,10 +196,12 @@ class ModalCreate extends React.Component {
       deskripsi: '',
       nominal: 0,
       tanggal: '',
+      category: '',
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.tambahItem = this.tambahItem.bind(this);
   }
 
   handleClose() {
@@ -174,12 +213,27 @@ class ModalCreate extends React.Component {
   handleShow() {
     this.setState({
       show: true,
+      category: this.props.category,
     });
   }
 
   handleChange(evt) {
     this.setState({
       [evt.target.name]: evt.target.value,
+    });
+  }
+
+  tambahItem() {
+    const Data = {
+      deskripsi: this.state.deskripsi,
+      category: this.state.category,
+      nominal: parseInt(this.state.nominal),
+      tanggal: this.state.tanggal,
+    };
+    const fnTambahItem = this.props.action;
+    fnTambahItem(this.state);
+    this.setState({
+      show: false,
     });
   }
 
@@ -208,6 +262,19 @@ class ModalCreate extends React.Component {
             </div>
 
             <div className="mb-3">
+              <label className="form-label">Category</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Masukan deskripsi"
+                name="category"
+                value={this.state.category}
+                onChange={this.handleChange}
+                disabled
+              />
+            </div>
+
+            <div className="mb-3">
               <label className="form-label">Nominal</label>
               <input
                 type="number"
@@ -232,9 +299,9 @@ class ModalCreate extends React.Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={this.handleClose}>
-              Save Changes
-            </Button>
+            <button className={this.props.variant} onClick={this.tambahItem}>
+              {this.props.text}
+            </button>
           </Modal.Footer>
         </Modal>
       </>

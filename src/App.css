@@ -101,16 +101,18 @@ h6 {
 
 .button {
   border-radius: 8px;
-  border: none;
+
   color: #f8f8f8;
 }
 
 .btn-merah {
   background: #f00000;
+  border: none;
 }
 
 .btn-ungu {
   background: #3c3d8f;
+  border: none;
 }
 
 .text-money-in {
