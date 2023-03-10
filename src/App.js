@@ -156,9 +156,13 @@ class ModalCreate extends React.Component {
     super();
     this.state = {
       show: false,
+      deskripsi: '',
+      nominal: 0,
+      tanggal: '',
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleClose() {
@@ -173,6 +177,12 @@ class ModalCreate extends React.Component {
     });
   }
 
+  handleChange(evt) {
+    this.setState({
+      [evt.target.name]: evt.target.value,
+    });
+  }
+
   render() {
     return (
       <>
@@ -184,7 +194,43 @@ class ModalCreate extends React.Component {
           <Modal.Header closeButton>
             <Modal.Title>{this.props.modalHeading}</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Body>
+            <div className="mb-3">
+              <label className="form-label">Deskripsi</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Masukan deskripsi"
+                name="deskripsi"
+                value={this.state.deskripsi}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Nominal</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Masukan nominal"
+                name="nominal"
+                value={this.state.nominal}
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Tanggal</label>
+              <input
+                type="date"
+                className="form-control"
+                placeholder="Masukan tanggal"
+                name="tanggal"
+                value={this.state.tanggal}
+                onChange={this.handleChange}
+              />
+            </div>
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={this.handleClose}>
               Save Changes
